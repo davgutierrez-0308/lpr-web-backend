@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  OPERATOR
+  ANALYST
+}
+
+enum AlertType {
+  BLACKLIST
+  WATCHLIST
+}
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  passwordHash    String
+  role            Role     @default(ANALYST)
+  enabled         Boolean  @default(true)
+  refreshTokenHash String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model EdgeNode {
+  id         String   @id @default(uuid())
+  name       String
+  location   String?
+  status     String   @default("DESCONOCIDO")
+  lastSeenAt DateTime?
+  cameras    Camera[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Camera {
+  id         String    @id @default(uuid())
+  edgeNodeId String?
+  edgeNode   EdgeNode? @relation(fields: [edgeNodeId], references: [id])
+  name       String
+  location   String?
+  status     String    @default("UNKNOWN")
+  rtspUrl    String?
+  lastSeenAt DateTime?
+  events     PlateEvent[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([edgeNodeId])
+}
+
+model AlertPlate {
+  id          String    @id @default(uuid())
+  plate       String
+  type        AlertType
+  description String?
+  enabled     Boolean   @default(true)
+  createdById String?
+  createdAt   DateTime  @default(now())
+
+  @@index([plate])
+  @@unique([plate, type])
+}
+
+model PlateEvent {
+  id          String     @id @default(uuid())
+  plate       String
+  confidence  Float
+  cameraId    String
+  camera      Camera     @relation(fields: [cameraId], references: [id])
+  capturedAt  DateTime   @default(now())
+  imageUrl    String?
+  isAlert     Boolean    @default(false)
+  alertType   AlertType?
+  raw         Json?
+
+  @@index([plate])
+  @@index([capturedAt])
+  @@index([cameraId, capturedAt])
+}
