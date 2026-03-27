@@ -14,14 +14,17 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../infrastructure/prisma/prisma.service");
 const realtime_service_1 = require("../realtime/realtime.service");
 const sms_service_1 = require("../events/sms.service");
+const email_service_1 = require("../events/email.service");
 let EventsService = class EventsService {
     prisma;
     rt;
     sms;
-    constructor(prisma, rt, sms) {
+    email;
+    constructor(prisma, rt, sms, email) {
         this.prisma = prisma;
         this.rt = rt;
         this.sms = sms;
+        this.email = email;
     }
     async createEvent(input) {
         const alert = await this.prisma.alertPlate.findFirst({
@@ -41,6 +44,7 @@ let EventsService = class EventsService {
         });
         this.rt.emit({ type: "plate_event", data: event });
         this.sms.sendSms("+51997406575", "Revisar alerta placa: " + input.plate);
+        this.email.sendEmail("dmguza@gmail.com", "[Alerta] Veci-placa Alerta reportada", "Alerta reportada - Vehículo detectado: " + input.plate, "<h2>🚨 Alerta Sistema Veci-placa</h2><p>Vehículo detectado: <b>" + input.plate + "</b></p>");
         return event;
     }
     async search(params) {
@@ -123,6 +127,9 @@ let EventsService = class EventsService {
 exports.EventsService = EventsService;
 exports.EventsService = EventsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService, realtime_service_1.RealtimeService, sms_service_1.SmsService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        realtime_service_1.RealtimeService,
+        sms_service_1.SmsService,
+        email_service_1.EmailService])
 ], EventsService);
 //# sourceMappingURL=events.service.js.map

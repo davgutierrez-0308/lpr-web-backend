@@ -1,11 +1,13 @@
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import { RealtimeService } from "../realtime/realtime.service";
 import { SmsService } from "../events/sms.service";
+import { EmailService } from "../events/email.service";
 export declare class EventsService {
     private prisma;
     private rt;
     private sms;
-    constructor(prisma: PrismaService, rt: RealtimeService, sms: SmsService);
+    private email;
+    constructor(prisma: PrismaService, rt: RealtimeService, sms: SmsService, email: EmailService);
     createEvent(input: {
         plate: string;
         confidence: number;

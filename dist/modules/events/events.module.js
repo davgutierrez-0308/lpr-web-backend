@@ -12,15 +12,16 @@ const events_service_1 = require("./events.service");
 const events_controller_1 = require("./events.controller");
 const realtime_module_1 = require("../realtime/realtime.module");
 const sms_service_1 = require("./sms.service");
+const email_service_1 = require("./email.service");
 let EventsModule = class EventsModule {
 };
 exports.EventsModule = EventsModule;
 exports.EventsModule = EventsModule = __decorate([
     (0, common_1.Module)({
         imports: [realtime_module_1.RealtimeModule],
-        providers: [events_service_1.EventsService, sms_service_1.SmsService],
+        providers: [events_service_1.EventsService, sms_service_1.SmsService, email_service_1.EmailService],
         controllers: [events_controller_1.EventsController],
-        exports: [events_service_1.EventsService, sms_service_1.SmsService],
+        exports: [events_service_1.EventsService, sms_service_1.SmsService, email_service_1.EmailService],
     })
 ], EventsModule);
 //# sourceMappingURL=events.module.js.map

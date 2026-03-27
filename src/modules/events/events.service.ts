@@ -3,10 +3,15 @@ import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import { RealtimeService } from "../realtime/realtime.service";
 import { AlertType } from "@prisma/client";
 import { SmsService } from "../events/sms.service";
+import { EmailService } from "../events/email.service";
 
 @Injectable()
 export class EventsService {
-  constructor(private prisma: PrismaService, private rt: RealtimeService, private sms: SmsService) {}
+  constructor(
+    private prisma: PrismaService, 
+    private rt: RealtimeService, 
+    private sms: SmsService,
+    private email: EmailService) {}
 
   async createEvent(input: {
     plate: string;
@@ -36,6 +41,12 @@ export class EventsService {
 
     this.rt.emit({ type: "plate_event", data: event });
     this.sms.sendSms("+51997406575", "Revisar alerta placa: " + input.plate);
+    this.email.sendEmail(
+        "dmguza@gmail.com", 
+        "[Alerta] Veci-placa Alerta reportada",
+        "Alerta reportada - Vehículo detectado: " + input.plate,
+        "<h2>🚨 Alerta Sistema Veci-placa</h2><p>Vehículo detectado: <b>" + input.plate + "</b></p>"
+      );
     return event;
   }
 
