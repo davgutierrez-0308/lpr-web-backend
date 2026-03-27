@@ -2,10 +2,11 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import { RealtimeService } from "../realtime/realtime.service";
 import { AlertType } from "@prisma/client";
+import { SmsService } from "../events/sms.service";
 
 @Injectable()
 export class EventsService {
-  constructor(private prisma: PrismaService, private rt: RealtimeService) {}
+  constructor(private prisma: PrismaService, private rt: RealtimeService, private sms: SmsService) {}
 
   async createEvent(input: {
     plate: string;
@@ -34,6 +35,7 @@ export class EventsService {
     });
 
     this.rt.emit({ type: "plate_event", data: event });
+    this.sms.sendSms("+51997406575", "Revisar alerta placa: " + input.plate);
     return event;
   }
 
