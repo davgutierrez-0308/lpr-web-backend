@@ -20,12 +20,13 @@ export class EventsService {
     capturedAt?: Date;
     imageUrl?: string;
     raw?: any;
+    vehicleUrl?: string;
   }) {
     // Eval alerta simple (placa exacta enabled)
     const alert = await this.prisma.alertPlate.findFirst({
       where: { plate: input.plate, enabled: true },
     });
-
+    console.log(input);
     const event = await this.prisma.plateEvent.create({
       data: {
         plate: input.plate,
@@ -36,9 +37,9 @@ export class EventsService {
         raw: input.raw,
         isAlert: !!alert,
         alertType: alert?.type ?? null,
+        vehicleUrl: input.vehicleUrl
       },
     });
-
     this.rt.emit({ type: "plate_event", data: event });
     this.sms.sendSms("+51997406575", "Revisar alerta placa: " + input.plate);
     this.email.sendEmail(
@@ -47,6 +48,7 @@ export class EventsService {
         "Alerta reportada - Vehículo detectado: " + input.plate,
         "<h2>🚨 Alerta Sistema Veci-placa</h2><p>Vehículo detectado: <b>" + input.plate + "</b></p>"
       );
+      
     return event;
   }
 

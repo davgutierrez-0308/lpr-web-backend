@@ -80,6 +80,7 @@ model PlateEvent {
   isAlert     Boolean    @default(false)
   alertType   AlertType?
   raw         Json?
+  vehicleUrl    String?
 
   @@index([plate])
   @@index([capturedAt])

@@ -42,13 +42,11 @@ let RealtimeController = class RealtimeController {
             console.log("JWT ERROR:", err);
             throw new common_1.UnauthorizedException("Invalid token");
         }
-        console.log(token);
         const hbMs = Number(this.config.get("SSE_HEARTBEAT_MS") ?? 15000);
         const heartbeat$ = (0, rxjs_1.interval)(hbMs).pipe((0, rxjs_1.map)(() => ({
             type: "heartbeat",
             data: { ts: new Date().toISOString() },
         })), (0, rxjs_1.map)((evt) => ({ data: evt })));
-        console.log(token);
         const events$ = this.rt.observable().pipe((0, rxjs_1.map)((evt) => ({ data: evt })));
         return (0, rxjs_1.merge)(events$, heartbeat$);
     }

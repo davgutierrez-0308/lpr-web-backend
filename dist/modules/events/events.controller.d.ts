@@ -5,6 +5,7 @@ declare class CreateEventDto {
     confidence: number;
     cameraId: string;
     imageUrl?: string;
+    vehicleUrl?: string;
 }
 export declare class EventsController {
     private events;
@@ -19,6 +20,7 @@ export declare class EventsController {
         isAlert: boolean;
         alertType: import("@prisma/client").$Enums.AlertType | null;
         raw: import("@prisma/client/runtime/library").JsonValue | null;
+        vehicleUrl: string | null;
     }>;
     findAll(query: SearchEventsDto): Promise<{
         data: {
@@ -31,6 +33,7 @@ export declare class EventsController {
             isAlert: boolean;
             alertType: import("@prisma/client").$Enums.AlertType | null;
             raw: import("@prisma/client/runtime/library").JsonValue | null;
+            vehicleUrl: string | null;
         }[];
         meta: {
             total: number;
@@ -50,6 +53,7 @@ export declare class EventsController {
             isAlert: boolean;
             alertType: import("@prisma/client").$Enums.AlertType | null;
             raw: import("@prisma/client/runtime/library").JsonValue | null;
+            vehicleUrl: string | null;
         }[];
         total: number;
         skip: number;

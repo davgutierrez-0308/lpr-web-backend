@@ -15,6 +15,7 @@ export declare class EventsService {
         capturedAt?: Date;
         imageUrl?: string;
         raw?: any;
+        vehicleUrl?: string;
     }): Promise<{
         id: string;
         plate: string;
@@ -25,6 +26,7 @@ export declare class EventsService {
         isAlert: boolean;
         alertType: import("@prisma/client").$Enums.AlertType | null;
         raw: import("@prisma/client/runtime/library").JsonValue | null;
+        vehicleUrl: string | null;
     }>;
     search(params: {
         plate?: string;
@@ -46,6 +48,7 @@ export declare class EventsService {
             isAlert: boolean;
             alertType: import("@prisma/client").$Enums.AlertType | null;
             raw: import("@prisma/client/runtime/library").JsonValue | null;
+            vehicleUrl: string | null;
         }[];
         total: number;
         skip: number;
@@ -62,6 +65,7 @@ export declare class EventsService {
             isAlert: boolean;
             alertType: import("@prisma/client").$Enums.AlertType | null;
             raw: import("@prisma/client/runtime/library").JsonValue | null;
+            vehicleUrl: string | null;
         }[];
         meta: {
             total: number;

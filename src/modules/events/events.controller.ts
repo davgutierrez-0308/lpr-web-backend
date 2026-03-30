@@ -18,6 +18,7 @@ class CreateEventDto {
   cameraId!: string;
 
   @IsOptional() @IsString() imageUrl?: string;
+  @IsOptional() @IsString() vehicleUrl?: string;
 }
 
 @UseGuards(JwtAuthGuard)

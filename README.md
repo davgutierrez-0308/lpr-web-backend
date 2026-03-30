@@ -31,6 +31,8 @@
 $ npm install
 ```
 
+npm run build
+
 ## Compile and run the project
 
 ```bash

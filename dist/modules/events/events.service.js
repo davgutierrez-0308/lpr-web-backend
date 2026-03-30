@@ -30,6 +30,7 @@ let EventsService = class EventsService {
         const alert = await this.prisma.alertPlate.findFirst({
             where: { plate: input.plate, enabled: true },
         });
+        console.log(input);
         const event = await this.prisma.plateEvent.create({
             data: {
                 plate: input.plate,
@@ -40,6 +41,7 @@ let EventsService = class EventsService {
                 raw: input.raw,
                 isAlert: !!alert,
                 alertType: alert?.type ?? null,
+                vehicleUrl: input.vehicleUrl
             },
         });
         this.rt.emit({ type: "plate_event", data: event });

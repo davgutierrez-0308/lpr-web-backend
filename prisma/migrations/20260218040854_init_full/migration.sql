@@ -70,6 +70,7 @@ CREATE TABLE "PlateEvent" (
     "isAlert" BOOLEAN NOT NULL DEFAULT false,
     "alertType" "AlertType",
     "raw" JSONB,
+    "vehicleUrl" TEXT,
 
     CONSTRAINT "PlateEvent_pkey" PRIMARY KEY ("id")
 );
