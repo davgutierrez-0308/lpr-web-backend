@@ -90,66 +90,66 @@ export class EventsService {
   }
 
   async search2(query: any) {
-  const {
-    plate,
-    cameraId,
-    isAlert,
-    from,
-    to,
-    page = "1",
-    limit = "20",
-  } = query;
+    const {
+      plate,
+      cameraId,
+      isAlert,
+      from,
+      to,
+      page = "1",
+      limit = "20",
+    } = query;
 
-  const where: any = {};
+    const where: any = {};
 
-  if (plate) {
-    where.plate = {
-      contains: plate.toUpperCase(),
-      mode: "insensitive",
+    if (plate) {
+      where.plate = {
+        contains: plate.toUpperCase(),
+        mode: "insensitive",
+      };
+    }
+
+    if (cameraId) {
+      where.cameraId = cameraId;
+    }
+
+    if (isAlert !== undefined) {
+      where.isAlert = isAlert === "true";
+    }
+
+    if (from || to) {
+      where.capturedAt = {};
+      if (from) {
+        where.capturedAt.gte = new Date(from);
+      }
+      if (to) {
+        where.capturedAt.lte = new Date(to);
+      }
+    }
+
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const [data, total] = await Promise.all([
+      this.prisma.plateEvent.findMany({
+        where,
+        orderBy: { capturedAt: "desc" },
+        skip,
+        take: limitNumber,
+      }),
+      this.prisma.plateEvent.count({ where }),
+    ]);
+    console.log("Data: ", data);
+    return {
+      data,
+      meta: {
+        total,
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil(total / limitNumber),
+      },
     };
   }
-
-  if (cameraId) {
-    where.cameraId = cameraId;
-  }
-
-  if (isAlert !== undefined) {
-    where.isAlert = isAlert === "true";
-  }
-
-  if (from || to) {
-    where.capturedAt = {};
-    if (from) {
-      where.capturedAt.gte = new Date(from);
-    }
-    if (to) {
-      where.capturedAt.lte = new Date(to);
-    }
-  }
-
-  const pageNumber = parseInt(page, 10);
-  const limitNumber = parseInt(limit, 10);
-  const skip = (pageNumber - 1) * limitNumber;
-
-  const [data, total] = await Promise.all([
-    this.prisma.plateEvent.findMany({
-      where,
-      orderBy: { capturedAt: "desc" },
-      skip,
-      take: limitNumber,
-    }),
-    this.prisma.plateEvent.count({ where }),
-  ]);
-  console.log("Data: ", data);
-  return {
-    data,
-    meta: {
-      total,
-      page: pageNumber,
-      limit: limitNumber,
-      totalPages: Math.ceil(total / limitNumber),
-    },
-  };
-}
 
 }
