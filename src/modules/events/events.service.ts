@@ -140,7 +140,7 @@ export class EventsService {
     }),
     this.prisma.plateEvent.count({ where }),
   ]);
-
+  console.log("Data: ", data);
   return {
     data,
     meta: {
