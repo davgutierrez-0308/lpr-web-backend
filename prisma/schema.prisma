@@ -16,6 +16,7 @@ enum Role {
 enum AlertType {
   BLACKLIST
   WATCHLIST
+  WHITELIST
 }
 
 model User {

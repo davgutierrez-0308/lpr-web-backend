@@ -20,7 +20,8 @@ export type Role = (typeof Role)[keyof typeof Role]
 
 export const AlertType = {
   BLACKLIST: 'BLACKLIST',
-  WATCHLIST: 'WATCHLIST'
+  WATCHLIST: 'WATCHLIST',
+  WHITELIST: 'WHITELIST'
 } as const
 
 export type AlertType = (typeof AlertType)[keyof typeof AlertType]

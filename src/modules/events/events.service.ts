@@ -22,11 +22,50 @@ export class EventsService {
     raw?: any;
     vehicleUrl?: string;
   }) {
+    const plate = input.plate.toUpperCase().trim();
+    console.log("Placa:", plate);
     // Eval alerta simple (placa exacta enabled)
-    const alert = await this.prisma.alertPlate.findFirst({
-      where: { plate: input.plate, enabled: true },
+    let rules = await this.prisma.alertPlate.findMany({
+      where: { plate, enabled: true },
     });
-    console.log(input);
+
+    console.log("RULES:", rules);
+    // 👉 AUTO CREACIÓN
+    if (rules.length === 0) {
+      const newRule = await this.prisma.alertPlate.create({
+        data: {
+          plate,
+          type: "WATCHLIST",
+          enabled: true,
+          description: "Alerta por defecto",
+        },
+      });
+
+      rules = [newRule];
+    }
+
+    // 👉 EVALUACIÓN
+    const hasWhitelist = rules.some(r => r.type === "WHITELIST");
+    const blacklist = rules.find(r => r.type === "BLACKLIST");
+    const watchlist = rules.find(r => r.type === "WATCHLIST");
+
+    let isAlert = false;
+    let alertType: AlertType | null = null;
+
+    // 🔥 SOLO blacklist alerta fuerte
+    if (!hasWhitelist) {
+      if (blacklist) {
+        isAlert = true;
+        alertType = "BLACKLIST";
+      }
+      // opcional:
+      else if (watchlist) {
+        isAlert = true;
+        alertType = "WATCHLIST";
+      }
+    }
+    console.log(alertType);
+
     const event = await this.prisma.plateEvent.create({
       data: {
         plate: input.plate,
@@ -35,20 +74,25 @@ export class EventsService {
         capturedAt: input.capturedAt ?? new Date(),
         imageUrl: input.imageUrl,
         raw: input.raw,
-        isAlert: !!alert,
-        alertType: alert?.type ?? null,
-        vehicleUrl: input.vehicleUrl
+        /*isAlert: !!alert,
+        alertType: alert?.type ?? null,*/
+        vehicleUrl: input.vehicleUrl,
+        isAlert,
+        alertType
       },
     });
     this.rt.emit({ type: "plate_event", data: event });
-    this.sms.sendSms("+51997406575", "Revisar alerta placa: " + input.plate);
-    this.email.sendEmail(
-        "dmguza@gmail.com", 
-        "[Alerta] Veci-placa Alerta reportada",
-        "Alerta reportada - Vehículo detectado: " + input.plate,
-        "<h2>🚨 Alerta Sistema Veci-placa</h2><p>Vehículo detectado: <b>" + input.plate + "</b></p>"
-      );
-      
+    if(isAlert){
+      console.log("Enviando las Alertas");
+      this.sms.sendSms("+51997406575", "Revisar alerta placa: " + input.plate);
+      this.email.sendEmail(
+          "dmguza@gmail.com", 
+          "[Alerta] Veci-placa Alerta reportada",
+          "Alerta reportada - Vehículo detectado: " + input.plate,
+          "<h2>🚨 Alerta Sistema Veci-placa</h2><p>Vehículo detectado: <b>" + input.plate + "</b></p>"
+        );
+        
+     }
     return event;
   }
 

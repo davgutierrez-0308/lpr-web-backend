@@ -8,6 +8,7 @@ exports.Role = {
 };
 exports.AlertType = {
     BLACKLIST: 'BLACKLIST',
-    WATCHLIST: 'WATCHLIST'
+    WATCHLIST: 'WATCHLIST',
+    WHITELIST: 'WHITELIST'
 };
 //# sourceMappingURL=enums.js.map
